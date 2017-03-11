@@ -7,3 +7,6 @@ Neural network to perform regression on wine data uses:
 - 70% training data, 15% development data, 15% test data
 
 TO RUN:
+
+NOTES:
+- To download and divide data yourself, run wine_data_separator.Rmd. 
