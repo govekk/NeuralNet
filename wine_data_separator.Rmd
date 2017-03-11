@@ -1,0 +1,43 @@
+---
+title: "Wine Data Separator"
+author: "Ryan Gorey, Kiya Govek"
+date: "March 11, 2017"
+output: html_document
+---
+
+This program downloads and then divides UCI's Wine Quality dataset into three sets: a training set (70%), a development set (15%), and an evaluation set (15%). The wines in this dataset are samples of white vinho verde wines from the North of Portugal, and the variables associated with them are series of real numbers corresponding with eleven physicochemical properties (along with a quality score from 1-9).
+
+Running this file produces three different files: `wine_training.csv`, `wine_dev.csv`, and `wine_eval.csv`. These files use single commas as delimeters.
+
+Note: This program pulls the dataset directly from UCI's website - no prior download of the dataset is needed. Additionally, this program sets a seed for random number generation before randomly dividing the dataset to ensure reproducible results.
+
+```{r pullWineData}
+temp <- tempfile()
+download.file("https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv", temp, mode="wb")
+wines <- read.table(temp, sep=";", header=T)
+```
+
+```{r separateData}
+set.seed(744)
+N <- nrow(wines)
+
+# Make Training Set
+train_index <- sample(1:N, replace = F, size = round(0.70*N))
+train_df <- wines[train_index,]
+
+# Make Development Set
+dev_eval_wines <- wines[-train_index,]
+N <- nrow(dev_eval_wines)
+dev_index <- sample(1:N, replace = F, size = round(0.5*N))
+dev_df <- dev_eval_wines[dev_index,]
+
+# Make Eval Set
+eval_df <- dev_eval_wines[-dev_index,]
+```
+
+```{r exportAsCSVs}
+write.table(train_df, file = "wines_training.csv", row.names=FALSE, col.names=TRUE, sep=",")
+write.table(train_df, file = "wines_dev.csv", row.names=FALSE, col.names=TRUE, sep=",")
+write.table(train_df, file = "wines_eval.csv", row.names=FALSE, col.names=TRUE, sep=",")
+```
+
