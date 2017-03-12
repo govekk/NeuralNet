@@ -1,6 +1,7 @@
 import csv
 
 global headings
+global learning_rate
 
 # data object takes in a list of info about wine
 # stores info in a dictionary
@@ -56,8 +57,9 @@ def import_data_file(file_name):
 # import data for all training, dev, and test files for use later
 def import_data():
     training_data = import_data_file("wine_training.csv")
-    # dev_data = import_data_file("wine_dev.csv")
-    # test_data = import_data_file("wine_eval.csv")
+    dev_data = import_data_file("wine_dev.csv")
+    test_data = import_data_file("wine_eval.csv")
+    learning_rate = 1
 
 if __name__ == "__main__":
     import_data()
