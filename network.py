@@ -123,6 +123,7 @@ class NeuralNetwork:
     # input: features of one data point (activation of input) (vector)
     # output: weighted input z of hidden layer (vector),
     #           weighted input z of output layer (vector)
+
     """
     Iterates through the neural network, calculating the weighted inputs
     along the way (for a specific training data point).
@@ -132,7 +133,7 @@ class NeuralNetwork:
 
     Returns the weighted inputs for the neurons.
     """
-    def feed_forward(self, data_point):
+    def feed_forward(self, training_point):
         # last column is answer
         # activation of first row are feature values from data_point (vector)
         # calculate z_hidden from data_point, z (vector) = wa (matrix)*(vector) + b (vector)
