@@ -61,8 +61,21 @@ def import_data_file(file_name):
 def import_data():
     training_data = import_data_file("wines_training.csv")
     dev_data = import_data_file("wines_dev.csv")
-    test_data = import_data_file("wines_eval.csv")
-    return training_data, dev_data, test_data
+    eval_data = import_data_file("wines_eval.csv")
+    return training_data, dev_data, eval_data
+
+def get_training_data():
+    training_data = import_data_file("wines_training.csv")
+    return training_data
+
+def get_dev_data():
+    dev_data = import_data_file("wines_dev.csv")
+    return dev_data
+
+def get_eval_data():
+    eval_data = import_data_file("wines_eval.csv")
+    return eval_data
+
 
 if __name__ == "__main__":
     import_data()
