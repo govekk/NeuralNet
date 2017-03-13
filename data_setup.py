@@ -1,3 +1,12 @@
+"""
+data_setup.py
+Authors: Ryan Gorey, Kiya Govek
+
+Imports data from training, development, and evaluation csv files
+Checks that input data is of the right format (float)
+Stores the data in lists
+"""
+
 import csv
 
 # # data object takes in a list of info about wine
@@ -33,7 +42,11 @@ import csv
 #         return self.quality
 
 
-# each feature is a float, so change from string to float
+"""
+Changes type of input data to float if it is not already
+
+Parameter: list of feature values for one data point
+"""
 def check_data_type(wine_info):
     for i in range(len(wine_info)):
         if type(wine_info[i]) != float:
@@ -41,7 +54,11 @@ def check_data_type(wine_info):
     return wine_info
 
 
-# import data from one file and create a list of data points from it
+"""
+import data from one file and create a list of data points from it
+
+Parameter: file name of csv file
+"""
 def import_data_file(file_name):
     data_file = open(file_name, 'r')
     data = csv.reader(data_file, delimiter=',')
@@ -57,7 +74,13 @@ def import_data_file(file_name):
     return data_list
 
 
-# import data for all training, dev, and test files for use later
+"""
+import data from training, dev, and test files for use later
+first method imports from all
+later methods import from one file individually
+
+Output: list(s) of data points, where a data point is stored as a list of feature values
+"""
 def import_data():
     training_data = import_data_file("wines_training.csv")
     dev_data = import_data_file("wines_dev.csv")
