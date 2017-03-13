@@ -43,9 +43,11 @@ class NeuralNetwork:
     """
     def __init__(self, learning_rate = 0.01):
         # Initialize weight matrices
-        w1 = np.array([(randInitialVal() for k in range(11)) for j in range(6)])
-        w2 = np.array([(randInitialVal() for k in range(6)) for j in range(1)])
+        w1 = np.array([[randInitialVal() for k in range(11)] for j in range(6)])
+        w2 = np.array([[randInitialVal() for k in range(6)] for j in range(1)])
         self.weights = [w1, w2]
+        print(w1)
+        print(w2)
 
         # Initialize bias matrices
         b1 = np.array([randInitialVal() for j in range(6)])
@@ -163,3 +165,8 @@ class NeuralNetwork:
     # side effects: changes weight and bias instance variables
     def gradient_descent(self, ):
         pass
+
+def main():
+    myNet = NeuralNetwork()
+
+main()
