@@ -13,6 +13,8 @@ the quality of new wines.
 
 import numpy as np
 import random
+import data_setup
+from math import exp
 
 ### HELPER FUNCTIONS ###
 
@@ -69,11 +71,13 @@ class NeuralNetwork:
 
     Returns vector of activations.
     """
-    def vectorizedSigmoid(self, z_vector):
-        for i in range(len(z_vector)):
-            z_vector[i] = sigmoid(z_vector[i])
+    def vectorized_sigmoid(self, z_vector):
+        a_vector = np.array([0.0 for i in range(len(z_vector))])
 
-        return z_vector
+        for i in range(len(z_vector)):
+            a_vector[i] = self.sigmoid(z_vector[i])
+
+        return a_vector
 
     """
     Applies the sigmoid function to a single weighted input z.
@@ -89,7 +93,7 @@ class NeuralNetwork:
         1 + e^(-z)
     """
     def sigmoid(self, z):
-        return (1/(1 + exp(-z)))
+        return (1.0/(1 + exp(-z)))
 
     """
     Trains the neural network on training data, preparing it for new
@@ -102,12 +106,12 @@ class NeuralNetwork:
 
     Returns nothing.
     """
-    def train(self, num_epochs, training_data):
+    def train(self, training_data, num_epochs = 1000):
         for i in range(num_epochs):
             for training_point in training_data:
-                z_hidden, z_output = self.feed_forward(training_point)
-                error_output = self.calculate_output_error(z_output, training_point[-1])
-                error_hidden = self.backpropagate(error_output, z_hidden)
+                z2_vector, z3_vector = self.feed_forward(training_point)
+                error_output_vector = self.calculate_output_error(z3_vector, np.array([training_point[-1]]))
+                error_hidden = self.backpropagate(error_output_vector, z2_vector)
             self.gradient_descent()
 
 
@@ -121,36 +125,65 @@ class NeuralNetwork:
     Returns the weighted inputs z in vectors by layer.
     """
     def feed_forward(self, training_point):
-        # last column is answer
-        # activation of first row are feature values from data_point (vector)
-        # calculate z_hidden from data_point, z (vector) = wa (matrix)*(vector) + b (vector)
-        # calculate a_hidden from z_hidden in sigmoid function, 1/(1+exp(z))
-        #                                    (vector, calculated individually)
-        # calculate z_output from a_hidden, z (scaler) = wa (vector)*(vector) + b (scaler)
+        # Initialize first layer of activations (features from training data point)
+        a1_vector = np.array([training_point[i] for i in range(len(training_point) - 1)])
 
-        
+        # Calculate the weighted inputs z of the hidden layer using the formula:
+        #           z^2(vector) = w^2 (matrix) * a^1 (vector) + b2 (vector),
+        #            where a^1 = sigmoid(z1)
+        z2_vector = np.dot(self.weights[0], a1_vector) + self.biases[0]
 
+        # Calculate a^2 using a^2 = sigmoid(z^2)
+        a2_vector = self.vectorized_sigmoid(z2_vector)
 
+        # Calculate z^output using same formula
+        z3_vector = np.dot(self.weights[1], a2_vector) + self.biases[1]
 
+        return z2_vector, z3_vector
 
+    """
+    Calculates the error of the output neuron (layer 3).
 
+    Compute error vector error_output_vector =
+                  cost_function_gradient_vector (*) derivative_output_function(z3_vector)
 
-        z_hidden, a_hidden, z_output = 1
-        return z_hidden, z_output
+        note: uses element-wise multiplication
 
-    # input: weighted input z of output neuron (vector length 1), correct output
-    # output: error of output layer (vector)
-    def calculate_output_error(self, z_output, answer):
-        # output derivative = 10 if multiply by 10
-        a_output = self.sigmoid(z_output)
-        # return (a_output - answer) * 10 < make this a vector!!!
+        Cost function = C=(1/2) ‖y−a^3‖^2, so derivative = (a3_vector - label_vector)
+        Output activation function = 10*z3_vector, derivative = 10
 
-    # backpropagates errors from output to hidden layer
-    # input: error of output layer (vector), weighted input of hidden layer (vector)
-    # output: error of hidden layer (vector)
-    def backpropagate(self, error_output, z_hidden):
-        # (self.weights[1] (transposed?) *error_output) * (sig'(z) = (sig(z) (1 - sig(z)))
-        pass
+    Parameters:
+    :z3_vector: - the weighted inputs for any neurons in output layer (we expect 1 neuron)
+    :label_vector: - the actual known answer of wine quality (int from 0-10)
+    """
+    def calculate_output_error(self, z3_vector, label_vector):
+        return (10*z3_vector - label_vector) * np.array([10])
+
+    """
+    Compute the errors vectors for each neuron layer before the output layer
+    and after the input layer. For this simple network, there is only one
+    hidden layer.
+
+    Compute error2_vector =
+                  ((w3 (matrix))^T * error_output_vector)(*) derivative_sigmoid(z2_vector)
+        sigmoid'(z) = sigmoid(z)(1 - sigmoid(z))
+
+        note: uses element-wise multiplication
+
+    Parameters:
+    :error_output_vector: - vector of errors for the output neurons (we expect 1 neuron).
+    :z2_vector: - vector of weighted inputs for the second (hidden) layer.
+
+    Returns error_vector of hidden layer.
+    """
+    def backpropagate(self, error_output_vector, z2_vector):
+        np.transpose(self.weights[1])
+
+        error2_vector = (np.dot(np.transpose(self.weights[1]), error_output_vector)) * \
+                        (self.sigmoid(z2_vector) * (1 - self.sigmoid(z2_vector)))
+
+        print(error2_vector)
+        return error2_vector
 
     # performs gradient descent to update weights for one iteration of training
     # input: sum of errors, sum of errors*activations
@@ -189,7 +222,9 @@ class NeuralNetwork:
 
 
 def main():
+    training_data = data_setup.get_training_data()
     myNet = NeuralNetwork()
-    myNet.train()
+    myNet.train(training_data)
+
 
 main()
