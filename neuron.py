@@ -20,7 +20,7 @@ class Neuron:
             feature_sum += features[feature_name] * self.weights[feature_name]
         self.output = 1/(1+ math.exp(-feature_sum-self.bias))
 
-    def update_weights(self):
+    def update_weights(self, change):
         # backpropogation
         pass
 
