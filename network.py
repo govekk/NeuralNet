@@ -33,6 +33,7 @@ Implements a neural network that uses gradient descent and
 backpropagation to learn from training data.
 """
 class NeuralNetwork:
+
     """
     Constructor: Initializes weights and biases for all neurons as zeros.
 
@@ -41,19 +42,20 @@ class NeuralNetwork:
 
     Returns a Neural Network object.
     """
-    def __init__(self, learning_rate = 0.01):
+    def __init__(self, learning_rate = 0.01, num_hidden = 6):
         # Initialize weight matrices
-        w1 = np.array([(randInitialVal() for k in range(11)) for j in range(6)])
-        w2 = np.array([(randInitialVal() for k in range(6)) for j in range(1)])
+        w1 = np.array([[randInitialVal() for k in range(11)] for j in range(num_hidden)])
+        w2 = np.array([[randInitialVal() for k in range(num_hidden)] for j in range(1)])
         self.weights = [w1, w2]
 
         # Initialize bias matrices
-        b1 = np.array([randInitialVal() for j in range(6)])
+        b1 = np.array([randInitialVal() for j in range(num_hidden)])
         b2 = np.array([randInitialVal() for j in range(1)])
         self.biases = [b1, b2]
 
         self.output_bias = 0
         self.learning_rate = learning_rate
+        self.num_hidden = num_hidden
 
     """
     Initializes weights as random values between 0 and 1
