@@ -74,9 +74,9 @@ class NeuralNetwork:
     Returns a list of batches, where each batch is a list of indices representing training data points
     """
     def create_batches(self, num_training_data, batch_size):
-        training_indices = range(num_training_data)
+        training_indices = list(range(num_training_data))
         random.shuffle(training_indices)
-        mini_batches = [training_indices[i:i + batch_size] for i in xrange(0, len(training_indices), batch_size)]
+        mini_batches = [training_indices[i:i + batch_size] for i in range(0, len(training_indices), batch_size)]
         return mini_batches
 
 
