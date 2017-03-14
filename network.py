@@ -114,7 +114,7 @@ class NeuralNetwork:
             a2_vectors=[]
             for training_point in training_data:
                 # Initialize first layer of activations (features from training data point)
-                a1_vector = np.array([training_point[i] for i in range(len(training_point) - 1)])
+                a1_vector = np.array(training_point[i] for i in range(len(training_point) - 1)])
                 z2_vector, z3_vector, a2_vector = self.feed_forward(a1_vector)
                 error_output_vector = self.calculate_output_error(z3_vector, np.array([training_point[-1]]))
                 error2_vector = self.backpropagate(error_output_vector, z2_vector)
