@@ -283,7 +283,7 @@ class NeuralNetwork:
         for case in data:
             a1_vector = np.array([[case[i]] for i in range(len(case) - 1)])
             z2, z3, a2 = self.feed_forward(a1_vector)
-            pred = self.vectorized_sigmoid(z3)[0][0]
+            pred = z3[0][0]
             data_with_preds.append([pred, case[-1]])
 
         return data_with_preds
