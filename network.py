@@ -54,8 +54,8 @@ class NeuralNetwork:
         self.weights = [w1, w2]
 
         # Initialize bias matrices
-        b1 = np.array([randInitialVal() for j in range(num_hidden)])
-        b2 = np.array([randInitialVal() for j in range(1)])
+        b1 = np.array([[randInitialVal()] for j in range(num_hidden)])
+        b2 = np.array([[randInitialVal()] for j in range(1)])
         self.biases = [b1, b2]
 
         self.output_bias = 0
@@ -72,10 +72,10 @@ class NeuralNetwork:
     Returns vector of activations.
     """
     def vectorized_sigmoid(self, z_vector):
-        a_vector = np.array([0.0 for i in range(len(z_vector))])
+        a_vector = np.array([[0.0] for i in range(len(z_vector))])
 
         for i in range(len(z_vector)):
-            a_vector[i] = self.sigmoid(z_vector[i])
+            a_vector[i][0] = self.sigmoid(z_vector[i][0])
 
         return a_vector
 
@@ -108,13 +108,15 @@ class NeuralNetwork:
     """
     def train(self, training_data, num_epochs = 1000):
         for i in range(num_epochs):
+            if i % 100 == 0:
+                print "Training " + str(i) + "th iteration"
             error2_vectors = []
             error3_vectors = []
             a1_vectors = []
             a2_vectors=[]
             for training_point in training_data:
                 # Initialize first layer of activations (features from training data point)
-                a1_vector = np.array([training_point[i] for i in range(len(training_point) - 1)])
+                a1_vector = np.array([[training_point[i]] for i in range(len(training_point) - 1)])
                 z2_vector, z3_vector, a2_vector = self.feed_forward(a1_vector)
                 error_output_vector = self.calculate_output_error(z3_vector, np.array([training_point[-1]]))
                 error2_vector = self.backpropagate(error_output_vector, z2_vector)
@@ -140,7 +142,8 @@ class NeuralNetwork:
         # Calculate the weighted inputs z of the hidden layer using the formula:
         #           z^2(vector) = w^2 (matrix) * a^1 (vector) + b2 (vector),
         #            where a^1 = sigmoid(z1)
-        z2_vector = np.dot(self.weights[0], a1_vector) + self.biases[0]
+        z2_vector = np.dot(self.weights[0], a1_vector)+ self.biases[0]
+        # 6x11 * 11x1
 
         # Calculate a^2 using a^2 = sigmoid(z^2)
         a2_vector = self.vectorized_sigmoid(z2_vector)
@@ -161,7 +164,7 @@ class NeuralNetwork:
     :label_vector: - the actual known answer of wine quality (int from 0-10)
     """
     def calculate_output_error(self, z3_vector, label_vector):
-        return (10*z3_vector - label_vector) * np.array([10])
+        return z3_vector - label_vector
 
     """
     Compute the errors vectors for each neuron layer before the output layer
@@ -199,17 +202,17 @@ class NeuralNetwork:
     """
     def gradient_descent(self, error2_vectors, error3_vectors, a1_vectors, a2_vectors, num_training_data):
         # initialize weight change matrices
-        weight2_change_matrix = np.array([[0 for k in range(11)] for j in range(self.num_hidden)])
-        weight3_change_matrix = np.array([[0 for k in range(self.num_hidden)] for j in range(1)])
+        weight2_change_matrix = np.array([[0.0 for k in range(11)] for j in range(self.num_hidden)])
+        weight3_change_matrix = np.array([[0.0 for k in range(self.num_hidden)] for j in range(1)])
 
         # initialize bias change vectors
-        bias2_change_vector = np.array([0 for j in range(self.num_hidden)])
-        bias3_change_vector = np.array([0 for j in range(1)])
+        bias2_change_vector = np.array([[0.0] for j in range(self.num_hidden)])
+        bias3_change_vector = np.array([[0.0] for j in range(1)])
 
         # sum gradients
         for i in range(num_training_data):
-            weight2_change_matrix += np.dot(error2_vectors[i], np.transpose(a1_vectors[i]))
-            weight3_change_matrix += np.dot(error3_vectors[i], np.transpose(a2_vectors[i]))
+            weight2_change_matrix += np.dot(error2_vectors[i], a1_vectors[i].T)
+            weight3_change_matrix += np.dot(error3_vectors[i], a2_vectors[i].T)
             bias2_change_vector += error2_vectors[i]
             bias3_change_vector += error3_vectors[i]
 
@@ -229,7 +232,7 @@ class NeuralNetwork:
 
     Returns nothing.
     """
-    def update_weights(self, layer, change_matrix_list):
+    def update_weights(self, change_matrix_list):
         for i in range(len(change_matrix_list)):
             self.weights[i] -= change_matrix_list[i]
 
@@ -243,7 +246,7 @@ class NeuralNetwork:
 
     Returns nothing.
     """
-    def update_biases(self, layer, change_vector_list):
+    def update_biases(self, change_vector_list):
         for i in range(len(change_vector_list)):
             self.biases[i] -= change_vector_list[i]
 
@@ -255,7 +258,7 @@ class NeuralNetwork:
 def main():
     training_data = data_setup.get_training_data()
     myNet = NeuralNetwork()
-    myNet.train(training_data, 1)
+    myNet.train(training_data)
 
 
 main()
