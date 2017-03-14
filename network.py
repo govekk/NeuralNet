@@ -108,11 +108,21 @@ class NeuralNetwork:
     """
     def train(self, training_data, num_epochs = 1000):
         for i in range(num_epochs):
+            error2_vectors = []
+            error_output_vectors = []
+            a1_vectors = []
+            a2_vectors=[]
             for training_point in training_data:
-                z2_vector, z3_vector = self.feed_forward(training_point)
+                # Initialize first layer of activations (features from training data point)
+                a1_vector = np.array([training_point[i] for i in range(len(training_point) - 1)])
+                z2_vector, z3_vector, a2_vector = self.feed_forward(a1_vector)
                 error_output_vector = self.calculate_output_error(z3_vector, np.array([training_point[-1]]))
-                error_hidden = self.backpropagate(error_output_vector, z2_vector)
-            self.gradient_descent()
+                error2_vector = self.backpropagate(error_output_vector, z2_vector)
+                error2_vectors.append(error2_vector)
+                error_output_vectors.append(error_output_vector)
+                a1_vectors.append(a1_vector)
+                a2_vectors.append(a2_vector)
+            self.gradient_descent(error2_vectors, error_output_vectors, a1_vectors, a2_vectors, len(training_data))
 
 
     """
@@ -120,14 +130,11 @@ class NeuralNetwork:
     along the way (for a specific training data point).
 
     Parameters:
-    :training_point: - a single case of training data
+    :a1_vector: - activation values for layer 1 (input layer)
 
     Returns the weighted inputs z in vectors by layer.
     """
-    def feed_forward(self, training_point):
-        # Initialize first layer of activations (features from training data point)
-        a1_vector = np.array([training_point[i] for i in range(len(training_point) - 1)])
-
+    def feed_forward(self, a1_vector):
         # Calculate the weighted inputs z of the hidden layer using the formula:
         #           z^2(vector) = w^2 (matrix) * a^1 (vector) + b2 (vector),
         #            where a^1 = sigmoid(z1)
@@ -139,18 +146,13 @@ class NeuralNetwork:
         # Calculate z^output using same formula
         z3_vector = np.dot(self.weights[1], a2_vector) + self.biases[1]
 
-        return z2_vector, z3_vector
+        return z2_vector, z3_vector, a2_vector
 
     """
     Calculates the error of the output neuron (layer 3).
 
     Compute error vector error_output_vector =
                   cost_function_gradient_vector (*) derivative_output_function(z3_vector)
-
-        note: uses element-wise multiplication
-
-        Cost function = C=(1/2) ‖y−a^3‖^2, so derivative = (a3_vector - label_vector)
-        Output activation function = 10*z3_vector, derivative = 10
 
     Parameters:
     :z3_vector: - the weighted inputs for any neurons in output layer (we expect 1 neuron)
@@ -180,16 +182,24 @@ class NeuralNetwork:
         np.transpose(self.weights[1])
 
         error2_vector = (np.dot(np.transpose(self.weights[1]), error_output_vector)) * \
-                        (self.sigmoid(z2_vector) * (1 - self.sigmoid(z2_vector)))
+                        (self.vectorized_sigmoid(z2_vector) * (1 - self.vectorized_sigmoid(z2_vector)))
 
-        print(error2_vector)
         return error2_vector
 
     # performs gradient descent to update weights for one iteration of training
     # input: sum of errors, sum of errors*activations
     # output: none
     # side effects: changes weight and bias instance variables
-    def gradient_descent(self, ):
+    def gradient_descent(self, error2_vectors, error_output_vectors, a1_vectors, a2_vectors, num_data_points):
+        # layer 2 weights: sum over x: np.dot(error2_vectors[x],np.transpose(a1_vectors[x]))
+        #      divide above by num data points, multiply by learning rate, update weights
+        # layer 2 biases: sum over x: error2_vectors[x]
+        #      divide above by num data points, multiply by learning rate, update weights
+        # layer 3 weights: sum over x: np.dot(error_output_vectors[x],np.transpose(a2_vectors[x]))
+        #      divide above by num data points, multiply by learning rate, update weights
+        # layer 3 biases: sum over x: error_output_vectors[x]
+        #      divide above by num data points, multiply by learning rate, update weights
+
         pass
 
     """
@@ -224,7 +234,7 @@ class NeuralNetwork:
 def main():
     training_data = data_setup.get_training_data()
     myNet = NeuralNetwork()
-    myNet.train(training_data)
+    myNet.train(training_data, 1)
 
 
 main()
