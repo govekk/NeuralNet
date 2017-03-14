@@ -65,6 +65,22 @@ class NeuralNetwork:
         self.num_hidden = int(num_hidden)
 
     """
+    Defines random mini-batches of the training data
+
+    Parameters:
+    :num_training_data: - the size of the training data
+    :batch_size: - the amount of data points to include in each batch
+
+    Returns a list of batches, where each batch is a list of indices representing training data points
+    """
+    def create_batches(self, num_training_data, batch_size):
+        training_indices = range(num_training_data)
+        random.shuffle(training_indices)
+        mini_batches = [training_indices[i:i + batch_size] for i in xrange(0, len(training_indices), batch_size)]
+        return mini_batches
+
+
+    """
     Applies the sigmoid function to vector of weighted inputs z.
 
     Parameters: Vector of weighted inputs z (floats)
@@ -100,33 +116,37 @@ class NeuralNetwork:
     predictions. Uses stochastic gradient descent and backpropagation.
 
     Parameters:
-    :num_epochs: - the number of times to iterate through training data (int)
     :training_data: - the data used to train the network. Comes in a list of
     lists, where each row is a data point and each column is a feature.
+    :batch_size: - the amount of data points to include in each mini batch
+    :num_epochs: - the number of times to iterate through training data (int)
 
     Returns nothing.
     """
-    def train(self, training_data, num_epochs = 1000):
+    def train(self, training_data, batch_size = 100, num_epochs = 1000):
         for i in range(num_epochs):
-            if i % 100 == 0:
+            if i % 10 == 0:
                 print("Training " + str(i) + "th iteration")
-            error2_vectors = []
-            error3_vectors = []
-            a1_vectors = []
-            a2_vectors=[]
-            for training_point in training_data:
-                # Initialize first layer of activations (features from training data point)
+            mini_batches = self.create_batches(len(training_data), batch_size)
+            for mini_batch in mini_batches:
+                error2_vectors = []
+                error3_vectors = []
+                a1_vectors = []
+                a2_vectors=[]
+                for training_point_index in mini_batch:
+                    training_point = training_data[training_point_index]
+                    # Initialize first layer of activations (features from training data point)
 
-                a1_vector = np.array([[training_point[i]] for i in range(len(training_point) - 1)])
-                z2_vector, z3_vector, a2_vector = self.feed_forward(a1_vector)
-                error_output_vector = self.calculate_output_error(z3_vector, np.array([training_point[-1]]))
-                error2_vector = self.backpropagate(error_output_vector, z2_vector)
+                    a1_vector = np.array([[training_point[i]] for i in range(len(training_point) - 1)])
+                    z2_vector, z3_vector, a2_vector = self.feed_forward(a1_vector)
+                    error_output_vector = self.calculate_output_error(z3_vector, np.array([training_point[-1]]))
+                    error2_vector = self.backpropagate(error_output_vector, z2_vector)
 
-                error2_vectors.append(error2_vector)
-                error3_vectors.append(error_output_vector)
-                a1_vectors.append(a1_vector)
-                a2_vectors.append(a2_vector)
-            self.gradient_descent(error2_vectors, error3_vectors, a1_vectors, a2_vectors, len(training_data))
+                    error2_vectors.append(error2_vector)
+                    error3_vectors.append(error_output_vector)
+                    a1_vectors.append(a1_vector)
+                    a2_vectors.append(a2_vector)
+                self.gradient_descent(error2_vectors, error3_vectors, a1_vectors, a2_vectors, len(mini_batch))
 
 
 
@@ -259,7 +279,7 @@ class NeuralNetwork:
 def main():
     training_data = data_setup.get_training_data()
     myNet = NeuralNetwork()
-    myNet.train(training_data)
+    myNet.train(training_data, num_epochs=100)
 
 
 main()
