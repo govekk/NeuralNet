@@ -1,4 +1,4 @@
-"""
+2"""
 Neural Network Implementation - Wine Quality Regression Task
 
 Authors: Ryan Gorey, Kiya Govek
@@ -111,7 +111,7 @@ class NeuralNetwork:
             for training_point in training_data:
                 z2_vector, z3_vector = self.feed_forward(training_point)
                 error_output_vector = self.calculate_output_error(z3_vector, np.array([training_point[-1]]))
-                error_hidden = self.backpropagate(error_output_vector, z2_vector)
+                error2_vector = self.backpropagate(error_output_vector, z2_vector)
             self.gradient_descent()
 
 
@@ -189,32 +189,62 @@ class NeuralNetwork:
     # input: sum of errors, sum of errors*activations
     # output: none
     # side effects: changes weight and bias instance variables
-    def gradient_descent(self, ):
-        pass
+    """
+    Uses the gradient descent rule to update weights and biases based on one iteration
+    through the training data.
 
+    Parameters:
+    ::
+    """
+    def gradient_descent(self, ):
+        # initialize weight change matrices
+        weight2_change_matrix = np.array([[0 for k in range(11)] for j in range(self.num_hidden)])
+        weight3_change_matrix = np.array([[0 for k in range(self.num_hidden)] for j in range(1)])
+
+        # initialize bias change vectors
+        bias2_change_vector = np.array([0 for j in range(num_hidden)])
+        bias3_change_vector = np.array([0 for j in range(1)])
+
+        # sum gradients
+        for i in range(num_training_data):
+            weight2_change_matrix += np.dot(error2_vectors[i], np.transpose(a1_vectors[i]))
+            weight3_change_matrix += np.dot(error3_vectors[i], np.transpose(a2_vectors[i]))
+            bias2_change_vector += error2_vectors[i]
+            bias3_change_vector += error3_vectors[i]
+
+        weight2_change_matrix = weight2_change_matrix * self.learning_rate/num_training_data
+        weight3_change_matrix = weight3_change_matrix * self.learning_rate/num_training_data
+        bias2_change_vector = bias2_change_vector * self.learning_rate/num_training_data
+        bias3_change_vector = bias3_change_vector * self.learning_rate/num_training_data
+
+        self.update_weights([weight2_change_matrix, weight3_change_matrix])
+        self.update_biases([bias2_change_vector, bias3_change_vector])
     """
     Updates the weights in accordance with gradient descent rule.
 
     Parameters:
     :layer: - the layer of weights to update.
-    :change_vector: - the calculated step change
+    :change_matrix_list: - list of matrices with weight changes (from shallow to deep)
 
     Returns nothing.
     """
-    def update_weights(self, layer, change_vector):
-        pass
+    def update_weights(self, layer, change_matrix_list):
+        for i in range(len(change_matrix_list)):
+            self.weights[i] -= change_matrix_list[i]
+
 
     """
     Updates the biases in accordance with gradient descent rule.
 
     Parameters:
     :layer: - the layer of weights to update.
-    :change_vector: - the calculated step change
+    :change_vector: - list of vectors with bias changes (from shallow to deep)
 
     Returns nothing.
     """
-    def update_biases(self, layer, change_vector):
-        pass
+    def update_biases(self, layer, change_vector_list):
+        for i in range(len(change_vector_list)):
+            self.biases[i] -= change_vector_list[i]
 
     # input: features of one data point (activation of input) (vector)
     # output: weighted input z of hidden layer (vector),
