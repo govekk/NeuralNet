@@ -217,7 +217,6 @@ class NeuralNetwork:
     Uses the gradient descent rule to update weights and biases based on one iteration
     through the training data.
 
-
     Parameters:
     ::
     """
@@ -250,13 +249,10 @@ class NeuralNetwork:
     Parameters:
     :layer: - the layer of weights to update.
     :change_matrix_list: - list of matrices with weight changes (from shallow to deep)
-
-    Returns nothing.
     """
     def update_weights(self, change_matrix_list):
         for i in range(len(change_matrix_list)):
             self.weights[i] -= change_matrix_list[i]
-
 
     """
     Updates the biases in accordance with gradient descent rule.
@@ -264,8 +260,6 @@ class NeuralNetwork:
     Parameters:
     :layer: - the layer of weights to update.
     :change_vector: - list of vectors with bias changes (from shallow to deep)
-
-    Returns nothing.
     """
     def update_biases(self, change_vector_list):
         for i in range(len(change_vector_list)):
@@ -275,11 +269,31 @@ class NeuralNetwork:
     # output: weighted input z of hidden layer (vector),
     #           weighted input z of output layer (vector)
 
+    """
+    Takes in a set of data and returns with the predicted wine quality. Must be
+    run after training.
+
+    Parameters:
+    :data: - list of data points to predict for (including label)
+
+    Returns the list of data points reduced to actual quality and predicted quality.
+    """
+    def get_predictions(self, data):
+        data_with_preds = []
+        for case in data:
+            a1_vector = np.array([[case[i]] for i in range(len(case) - 1)])
+            z2, z3, a2 = self.feed_forward(a1_vector)
+            pred = self.vectorized_sigmoid(z3)[0][0]
+            data_with_preds.append([pred, case[-1]])
+
+        return data_with_preds
 
 def main():
     training_data = data_setup.get_training_data()
     myNet = NeuralNetwork()
-    myNet.train(training_data, num_epochs=100)
+    myNet.train(training_data, num_epochs=100, batch_size=10)
 
+    dev_data = data_setup.get_dev_data()
+    myNet.get_predictions(dev_data)
 
 main()
