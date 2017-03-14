@@ -38,7 +38,7 @@ def main():
 
     # Make Neural Network Object
     wine_net = network.NeuralNetwork()
-    wine_net.train(training_data, 10000)
+    wine_net.train(training_data)
     # Evaluate Dev Data Options
     dev_data = data_setup.get_dev_data()
     preds = wine_net.get_predictions(dev_data)

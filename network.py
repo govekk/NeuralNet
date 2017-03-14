@@ -287,13 +287,13 @@ class NeuralNetwork:
             data_with_preds.append([pred, case[-1]])
 
         return data_with_preds
-
-def main():
-    training_data = data_setup.get_training_data()
-    myNet = NeuralNetwork()
-    myNet.train(training_data, num_epochs=100, batch_size=10)
-
-    dev_data = data_setup.get_dev_data()
-    myNet.get_predictions(dev_data)
-
-main()
+#
+# def main():
+#     training_data = data_setup.get_training_data()
+#     myNet = NeuralNetwork()
+#     myNet.train(training_data, num_epochs=100, batch_size=10)
+#
+#     dev_data = data_setup.get_dev_data()
+#     myNet.get_predictions(dev_data)
+#
+# main()
