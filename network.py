@@ -108,9 +108,9 @@ class NeuralNetwork:
         1 + e^(-z)
     """
     def sigmoid(self, z):
-        if z > 230:
+        if z < -230:
             return 0.0
-        if z < -37:
+        if z > 37:
             return 1.0
         return (1.0/(1 + exp(-z)))
 
@@ -292,18 +292,14 @@ class NeuralNetwork:
 
 def main():
     training_data = data_setup.get_training_data()
-    myNet = NeuralNetwork(num_hidden=4)
-    myNet.train(training_data, num_epochs=200, batch_size=100)
+    myNet = NeuralNetwork(learning_rate=0.3, num_hidden=8)
+    myNet.train(training_data, num_epochs=1000, batch_size=256)
 
-    dev_data = data_setup.get_dev_data()
-    preds = myNet.get_predictions(dev_data)
+    eval_data = data_setup.get_eval_data()
+    preds = myNet.get_predictions(eval_data)
 
     MSE = 0
-    index = 0
     for x in range(len(preds)):
-        if index < 10:
-            index += 1
-            print(float(preds[x][0]), float(preds[x][1]))
         MSE += (float(preds[x][0]) - float(preds[x][1])) ** 2
     RMSE = sqrt(MSE / len(preds))
     print(RMSE)

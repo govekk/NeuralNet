@@ -9,39 +9,6 @@ Stores the data in lists
 
 import csv
 
-# # data object takes in a list of info about wine
-# # stores info in a dictionary
-# # getter method for the features takes in a feature name - must be same as in headings
-# class WineDataPoint:
-#     def __init__(self, wine_headings, wine_info):
-#         self.features = self.set_features(wine_headings[:-1], wine_info[:-1])
-#         self.quality = float(wine_info[-1])
-#
-#     def set_features(self, wine_headings, wine_info):
-#         self.check_inputs(wine_headings, wine_info)
-#         features = {}
-#         for i in range(len(wine_headings)):
-#             features[wine_headings[i]] = wine_info[i]
-#         return features
-#
-#     def check_inputs(self, wine_headings, wine_info):
-#         for i in range(len(wine_headings)):
-#             if type(wine_info[i]) != float:
-#                 wine_info[i] = float(wine_info[i])
-#             if type(wine_headings) != str:
-#                 wine_headings[i] = float(wine_headings[i])
-#
-#     def get_feature(self, feature_name):
-#         if feature_name in self.features:
-#             return self.features[feature_name]
-#         else:
-#             return None
-#
-#     # this is our output variable
-#     def get_quality(self):
-#         return self.quality
-
-
 """
 Changes type of input data to float if it is not already
 
