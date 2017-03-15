@@ -33,10 +33,10 @@ def getRMSE(preds):
 
 def main():
     training_data = data_setup.get_training_data()
-    wine_net = network.NeuralNetwork(learning_rate=0.3, num_hidden=8)
-    wine_net.train(training_data, batch_size=256, num_epochs=1000)
-    dev_data = data_setup.get_dev_data()
-    preds = wine_net.get_predictions(dev_data)
+    wine_net = network.NeuralNetwork(learning_rate=0.1, num_hidden=10)
+    wine_net.train(training_data, batch_size=256, num_epochs=5000)
+    eval_data = data_setup.get_eval_data()
+    preds = wine_net.get_predictions(eval_data)
     print(getRMSE(preds))
 
 main()

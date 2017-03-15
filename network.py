@@ -128,8 +128,8 @@ class NeuralNetwork:
     """
     def train(self, training_data, batch_size = 100, num_epochs = 1000):
         for i in range(num_epochs):
-            #if i % 100 == 0:
-            #    print("Training " + str(i) + "th iteration")
+            if i % 100 == 0:
+               print("Training " + str(i) + "th iteration")
             mini_batches = self.create_batches(len(training_data), batch_size)
             for mini_batch in mini_batches:
                 error2_vectors = []
