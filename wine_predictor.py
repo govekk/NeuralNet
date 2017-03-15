@@ -18,6 +18,8 @@ import network
 ### Main Program ###
 
 def test_hyperparameters():
+    f = open("Results.txt", "w")
+
     training_data = data_setup.get_training_data()
     dev_data = data_setup.get_dev_data()
 
@@ -40,9 +42,14 @@ def test_hyperparameters():
                 MSE = 0
                 for x in range(len(preds)):
                     MSE += (float(preds[x][0]) - float(preds[x][1])) ** 2
-                RMSE = math.sqrt(MSE) / len(preds)
+                RMSE = math.sqrt(MSE / len(preds))
                 results.append([learning_rates[i], hidden_neurons[j], batch_sizes[k], RMSE])
 
+                f.write("Learning Rate: " + str(learning_rates[i]) + ", Hidden Neurons: " + str(hidden_neurons[j]) + ", Batch Sizes: " + str(
+                        batch_sizes[k]) + "\n")
+                f.write("RMSE: " + str(RMSE) + "\n\n")
+
+    f.close()
     return results
 
 def save_all_results(results):
@@ -71,6 +78,5 @@ def main():
     results = test_hyperparameters()
     save_all_results(results)
     save_best_result()
-
 
 main()
