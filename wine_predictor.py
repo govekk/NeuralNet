@@ -23,9 +23,13 @@ def test_hyperparameters():
     training_data = data_setup.get_training_data()
     dev_data = data_setup.get_dev_data()
 
-    learning_rates = [0.01, 0.1, 0.3, 0.5, 0.7, 0.9]
+    #learning_rates = [0.01, 0.1, 0.3, 0.5, 0.7, 0.9]
+    #hidden_neurons = [2, 4, 6, 8, 10]
+    #batch_sizes = [128, 256]
+
+    learning_rates = [0.1, 0.3, 0.5, 0.7, 0.9]
     hidden_neurons = [2, 4, 6, 8, 10]
-    batch_sizes = [128, 256]
+    batch_sizes = [256]
     results = []
 
     counter = 0
@@ -33,21 +37,23 @@ def test_hyperparameters():
         for j in range(len(hidden_neurons)):
             for k in range(len(batch_sizes)):
                 counter += 1
-                print("Training Combo: " + str(counter))
-                wine_net = None
-                wine_net = network.NeuralNetwork(learning_rates[i], hidden_neurons[j])
-                wine_net.train(training_data, batch_size=batch_sizes[k], num_epochs=2000)
-                preds = wine_net.get_predictions(dev_data)
+                if counter not in [1,2,3,4,5,6,7,11]:
+                    print("Training Combo: " + str(counter))
+                    wine_net = None
+                    wine_net = network.NeuralNetwork(learning_rates[i], hidden_neurons[j])
+                    wine_net.train(training_data, batch_size=batch_sizes[k], num_epochs=1000)
+                    preds = wine_net.get_predictions(dev_data)
 
-                MSE = 0
-                for x in range(len(preds)):
-                    MSE += (float(preds[x][0]) - float(preds[x][1])) ** 2
-                RMSE = math.sqrt(MSE / len(preds))
-                results.append([learning_rates[i], hidden_neurons[j], batch_sizes[k], RMSE])
+                    MSE = 0
+                    for x in range(len(preds)):
+                        MSE += (float(preds[x][0]) - float(preds[x][1])) ** 2
+                    RMSE = math.sqrt(MSE / len(preds))
+                    results.append([learning_rates[i], hidden_neurons[j], batch_sizes[k], RMSE])
 
-                f.write("Learning Rate: " + str(learning_rates[i]) + ", Hidden Neurons: " + str(hidden_neurons[j]) + ", Batch Sizes: " + str(
-                        batch_sizes[k]) + "\n")
-                f.write("RMSE: " + str(RMSE) + "\n\n")
+                    f.write("Learning Rate: " + str(learning_rates[i]) + ", Hidden Neurons: " + str(hidden_neurons[j]) + ", Batch Sizes: " + str(batch_sizes[k]) + "\n")
+                    f.write("RMSE: " + str(RMSE) + "\n\n")
+                    print("Learning Rate: " + str(learning_rates[i]) + ", Hidden Neurons: " + str(hidden_neurons[j]) + ", Batch Sizes: " + str(batch_sizes[k]) + "\n")
+                    print("RMSE: " + str(RMSE) + "\n\n")
 
     f.close()
     return results

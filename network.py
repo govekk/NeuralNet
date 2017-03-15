@@ -106,7 +106,7 @@ class NeuralNetwork:
     """
     def sigmoid(self, z):
         if z > 230:
-            return 0.0
+            return 0.00000000001
         if z < -37:
             return 1.0
         return (1.0/(1 + exp(-z)))
