@@ -47,7 +47,7 @@ class NeuralNetwork:
 
     Returns a Neural Network object.
     """
-    def __init__(self, learning_rate=0.01, num_hidden=6):
+    def __init__(self, learning_rate=0.1, num_hidden=10):
         # Initialize weight matrices
         w1 = np.array([[randInitialVal() for k in range(11)] for j in range(num_hidden)])
         w2 = np.array([[randInitialVal() for k in range(num_hidden)] for j in range(1)])
@@ -108,8 +108,8 @@ class NeuralNetwork:
         1 + e^(-z)
     """
     def sigmoid(self, z):
-        if z < -230:
-            return 0.0
+        if z < -100:
+            return 0.00000000001
         if z > 37:
             return 1.0
         return (1.0/(1 + exp(-z)))
@@ -215,7 +215,8 @@ class NeuralNetwork:
     """
     def backpropagate(self, error_output_vector, z2_vector):
         error2_vector = (np.dot(np.transpose(self.weights[1]), error_output_vector)) * \
-                        (self.vectorized_sigmoid(z2_vector) * (1 - self.vectorized_sigmoid(z2_vector)))
+        (self.vectorized_sigmoid(z2_vector) * (1.0 - self.vectorized_sigmoid(z2_vector)))
+
         return error2_vector
 
 
@@ -290,18 +291,18 @@ class NeuralNetwork:
 
         return data_with_preds
 
-def main():
-    training_data = data_setup.get_training_data()
-    myNet = NeuralNetwork(learning_rate=0.3, num_hidden=8)
-    myNet.train(training_data, num_epochs=1000, batch_size=256)
-
-    eval_data = data_setup.get_eval_data()
-    preds = myNet.get_predictions(eval_data)
-
-    MSE = 0
-    for x in range(len(preds)):
-        MSE += (float(preds[x][0]) - float(preds[x][1])) ** 2
-    RMSE = sqrt(MSE / len(preds))
-    print(RMSE)
-
-main()
+# def main():
+#     training_data = data_setup.get_training_data()
+#     myNet = NeuralNetwork(learning_rate=0.3, num_hidden=8)
+#     myNet.train(training_data, num_epochs=1000, batch_size=256)
+#
+#     eval_data = data_setup.get_eval_data()
+#     preds = myNet.get_predictions(eval_data)
+#
+#     MSE = 0
+#     for x in range(len(preds)):
+#         MSE += (float(preds[x][0]) - float(preds[x][1])) ** 2
+#     RMSE = sqrt(MSE / len(preds))
+#     print(RMSE)
+#
+# main()
