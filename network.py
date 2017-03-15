@@ -105,9 +105,9 @@ class NeuralNetwork:
         1 + e^(-z)
     """
     def sigmoid(self, z):
-        if z > 100:
+        if z < -100:
             return 0.00000000001
-        if z < -37:
+        if z > 37:
             return 1.0
         return (1.0/(1 + exp(-z)))
 
