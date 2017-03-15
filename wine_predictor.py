@@ -26,12 +26,15 @@ def test_hyperparameters():
     batch_sizes = [128, 256]
     results = []
 
+    counter = 0
     for i in range(len(learning_rates)):
         for j in range(len(hidden_neurons)):
             for k in range(len(batch_sizes)):
+                counter += 1
+                print("Training Combo: " + str(counter))
                 wine_net = None
                 wine_net = network.NeuralNetwork(learning_rates[i], hidden_neurons[j])
-                wine_net.train(training_data, batch_size=batch_sizes[k], num_epochs=1000)
+                wine_net.train(training_data, batch_size=batch_sizes[k], num_epochs=2000)
                 preds = wine_net.get_predictions(dev_data)
 
                 MSE = 0
