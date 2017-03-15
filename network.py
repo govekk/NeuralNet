@@ -14,6 +14,8 @@ the quality of new wines.
 import numpy as np
 import random
 from math import exp
+from math import sqrt
+import data_setup
 
 ### HELPER FUNCTIONS ###
 
@@ -36,6 +38,7 @@ Implements a neural network that uses gradient descent and
 backpropagation to learn from training data.
 """
 class NeuralNetwork:
+
     """
     Constructor: Initializes weights and biases for all neurons as zeros.
 
@@ -207,11 +210,8 @@ class NeuralNetwork:
     Returns error_vector of hidden layer.
     """
     def backpropagate(self, error_output_vector, z2_vector):
-        np.transpose(self.weights[1])
-
         error2_vector = (np.dot(np.transpose(self.weights[1]), error_output_vector)) * \
                         (self.vectorized_sigmoid(z2_vector) * (1 - self.vectorized_sigmoid(z2_vector)))
-
         return error2_vector
 
 
@@ -267,10 +267,6 @@ class NeuralNetwork:
         for i in range(len(change_vector_list)):
             self.biases[i] -= change_vector_list[i]
 
-    # input: features of one data point (activation of input) (vector)
-    # output: weighted input z of hidden layer (vector),
-    #           weighted input z of output layer (vector)
-
     """
     Takes in a set of data and returns with the predicted wine quality. Must be
     run after training.
@@ -289,13 +285,23 @@ class NeuralNetwork:
             data_with_preds.append([pred, case[-1]])
 
         return data_with_preds
-#
-# def main():
-#     training_data = data_setup.get_training_data()
-#     myNet = NeuralNetwork()
-#     myNet.train(training_data, num_epochs=100, batch_size=10)
-#
-#     dev_data = data_setup.get_dev_data()
-#     myNet.get_predictions(dev_data)
-#
-# main()
+
+def main():
+    training_data = data_setup.get_training_data()
+    myNet = NeuralNetwork(num_hidden=4)
+    myNet.train(training_data, num_epochs=200, batch_size=100)
+
+    dev_data = data_setup.get_dev_data()
+    preds = myNet.get_predictions(dev_data)
+
+    MSE = 0
+    index = 0
+    for x in range(len(preds)):
+        if index < 10:
+            index += 1
+            print(float(preds[x][0]), float(preds[x][1]))
+        MSE += (float(preds[x][0]) - float(preds[x][1])) ** 2
+    RMSE = sqrt(MSE / len(preds))
+    print(RMSE)
+
+main()
