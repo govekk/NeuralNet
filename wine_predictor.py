@@ -42,7 +42,7 @@ def test_hyperparameters():
                 MSE = 0
                 for x in range(len(preds)):
                     MSE += (float(preds[x][0]) - float(preds[x][1])) ** 2
-                RMSE = math.sqrt(MSE) / len(preds)
+                RMSE = math.sqrt(MSE / len(preds))
                 results.append([learning_rates[i], hidden_neurons[j], batch_sizes[k], RMSE])
 
                 f.write("Learning Rate: " + str(learning_rates[i]) + ", Hidden Neurons: " + str(hidden_neurons[j]) + ", Batch Sizes: " + str(
