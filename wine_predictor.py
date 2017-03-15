@@ -21,39 +21,53 @@ def test_hyperparameters():
     training_data = data_setup.get_training_data()
     dev_data = data_setup.get_dev_data()
 
-    learning_rates = [0.001, 0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99, 0.999, 1]
-    hidden_neurons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    learning_rates = [0.01, 0.1, 0.3, 0.5, 0.7, 0.9]
+    hidden_neurons = [2, 4, 6, 8, 10]
+    batch_sizes = [128, 256]
+    results = []
 
     for i in range(len(learning_rates)):
         for j in range(len(hidden_neurons)):
-            wine_net = NeuralNetwork(learning_rates[i], hidden_neurons[j])
-            wine_net.train(training_data)
-            results = wine_net.get_predictions(dev_data)
-            evaluate(results)
+            for k in range(len(batch_sizes)):
+                wine_net = None
+                wine_net = network.NeuralNetwork(learning_rates[i], hidden_neurons[j])
+                wine_net.train(training_data, batch_size=batch_sizes[k], num_epochs=1000)
+                preds = wine_net.get_predictions(dev_data)
+
+                MSE = 0
+                for x in range(len(preds)):
+                    MSE += (float(preds[x][0]) - float(preds[x][1])) ** 2
+                RMSE = math.sqrt(MSE) / len(preds)
+                results.append([learning_rates[i], hidden_neurons[j], batch_sizes[k], RMSE])
+
+    return results
+
+def save_all_results(results):
+    f = open("Results.txt", "w")
+
+    for combo in results:
+        f.write("Learning Rate: " + str(combo[0]) + ", Hidden Neurons: " + str(combo[1]) + ", Batch Sizes: " + str(combo[2]) + "\n")
+        f.write("RMSE: " + str(combo[3]) + "\n\n")
+
+    f.close()
+
+def save_best_result(results):
+    best_RMSE = 999999
+    best_RMSE_index = -1
+    for i in range(results):
+        if results[i][3] < best_RMSE:
+            best_RMSE = results[i][3]
+            best_RMSE_index = i
+
+    f = open("Best_Result.txt", "w")
+    f.write("Learning Rate: " + str(results[i][0]) + ", Hidden Neurons: " + str(results[i][1]) + ", Batch Sizes: " + str(results[i][2]) + "\n")
+    f.write("RMSE: " + str(results[i][3]) + "\n\n")
+    f.close()
 
 def main():
-
-    # Get Data
-    training_data = data_setup.get_training_data()
-
-    # Make Neural Network Object
-    wine_net = network.NeuralNetwork()
-    wine_net.train(training_data)
-    # Evaluate Dev Data Options
-    dev_data = data_setup.get_dev_data()
-    preds = wine_net.get_predictions(dev_data)
-
-    MSE = 0
-
-
-
-    for i in range(len(preds)):
-        MSE += (float(preds[i][0]) - float(preds[i][1])) ** 2
-    print(math.sqrt(MSE / len(preds)))
-
-    # Choose Favorite
-
-    # Evaluate Eval Data
+    results = test_hyperparameters()
+    save_all_results(results)
+    save_best_result()
 
 
 main()

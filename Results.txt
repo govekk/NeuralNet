@@ -1,0 +1,12 @@
+Learning Rate: 0.1, Hidden Neurons: 1, Batch Sizes: 256
+RMSE: 0.015023811248649124
+
+Learning Rate: 0.1, Hidden Neurons: 2, Batch Sizes: 256
+RMSE: 0.015023042073776673
+
+Learning Rate: 0.01, Hidden Neurons: 1, Batch Sizes: 256
+RMSE: 0.015022626472868977
+
+Learning Rate: 0.01, Hidden Neurons: 2, Batch Sizes: 256
+RMSE: 0.015022589706603508
+

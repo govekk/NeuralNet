@@ -13,7 +13,6 @@ the quality of new wines.
 
 import numpy as np
 import random
-import data_setup
 from math import exp
 
 ### HELPER FUNCTIONS ###
@@ -37,7 +36,6 @@ Implements a neural network that uses gradient descent and
 backpropagation to learn from training data.
 """
 class NeuralNetwork:
-
     """
     Constructor: Initializes weights and biases for all neurons as zeros.
 
@@ -46,9 +44,8 @@ class NeuralNetwork:
 
     Returns a Neural Network object.
     """
-    def __init__(self, learning_rate = 0.01, num_hidden = 6):
+    def __init__(self, learning_rate=0.01, num_hidden=6):
         # Initialize weight matrices
-
         w1 = np.array([[randInitialVal() for k in range(11)] for j in range(num_hidden)])
         w2 = np.array([[randInitialVal() for k in range(num_hidden)] for j in range(1)])
         self.weights = [w1, w2]
@@ -61,8 +58,10 @@ class NeuralNetwork:
         self.output_bias = 0
         self.learning_rate = learning_rate
 
-        assert(int(num_hidden) > 0)
-        self.num_hidden = int(num_hidden)
+        if num_hidden < 1:
+            self.num_hidden = 1
+        else:
+            self.num_hidden = int(num_hidden)
 
     """
     Defines random mini-batches of the training data
@@ -78,7 +77,6 @@ class NeuralNetwork:
         random.shuffle(training_indices)
         mini_batches = [training_indices[i:i + batch_size] for i in range(0, len(training_indices), batch_size)]
         return mini_batches
-
 
     """
     Applies the sigmoid function to vector of weighted inputs z.
@@ -102,10 +100,8 @@ class NeuralNetwork:
     :z: - the weighted input for a sigmoid neuron
 
     Returns the activation (float) using sigmoid function:
-
             1
         _________
-
         1 + e^(-z)
     """
     def sigmoid(self, z):
@@ -125,21 +121,27 @@ class NeuralNetwork:
     """
     def train(self, training_data, batch_size = 100, num_epochs = 1000):
         for i in range(num_epochs):
-            if i % 10 == 0:
+            if i % 100 == 0:
                 print("Training " + str(i) + "th iteration")
             mini_batches = self.create_batches(len(training_data), batch_size)
             for mini_batch in mini_batches:
                 error2_vectors = []
                 error3_vectors = []
                 a1_vectors = []
-                a2_vectors=[]
+                a2_vectors = []
+
                 for training_point_index in mini_batch:
                     training_point = training_data[training_point_index]
-                    # Initialize first layer of activations (features from training data point)
 
+                    # Initialize first layer of activations (features from training data point)
                     a1_vector = np.array([[training_point[i]] for i in range(len(training_point) - 1)])
+
+                    # Feed Forward
                     z2_vector, z3_vector, a2_vector = self.feed_forward(a1_vector)
+
+
                     error_output_vector = self.calculate_output_error(z3_vector, np.array([training_point[-1]]))
+
                     error2_vector = self.backpropagate(error_output_vector, z2_vector)
 
                     error2_vectors.append(error2_vector)
